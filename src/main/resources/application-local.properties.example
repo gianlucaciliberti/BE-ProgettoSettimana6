@@ -1,0 +1,14 @@
+# Copia questo file in "application-local.properties" (stessa cartella) e riempi i valori reali.
+# "application-local.properties" e' ignorato da git: non committare mai credenziali reali.
+
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+
+# Account Gmail da cui inviare le email di statistiche.
+# La password NON e' quella del tuo account Google, ma una "App Password"
+# generata su https://myaccount.google.com/apppasswords (richiede la verifica in due passaggi attiva).
+MAIL_USERNAME=tuo.indirizzo@gmail.com
+MAIL_APP_PASSWORD=xxxxxxxxxxxxxxxx
+
+# API key generata su https://openrouter.ai/settings/keys
+OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
