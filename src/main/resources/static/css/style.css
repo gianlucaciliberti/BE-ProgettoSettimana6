@@ -239,6 +239,15 @@ button {
     font-weight: 600;
 }
 
+#chat-with-name {
+    font-size: 17px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    transition: background-color 0.2s ease;
+}
+
 .messages {
     flex: 1;
     overflow-y: auto;
@@ -258,15 +267,11 @@ button {
 
 .bubble-in {
     align-self: flex-start;
-    background: #e4e6eb;
-    color: #050505;
     border-bottom-left-radius: 4px;
 }
 
 .bubble-out {
     align-self: flex-end;
-    background: #0084ff;
-    color: #fff;
     border-bottom-right-radius: 4px;
 }
 

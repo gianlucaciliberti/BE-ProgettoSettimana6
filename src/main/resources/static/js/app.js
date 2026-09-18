@@ -2,6 +2,22 @@ let currentUser = null;
 let chats = [];
 let selectedChatId = null;
 let selectedChatName = '';
+let selectedChatColor = null;
+
+const CHAT_COLORS = [
+    { base: '#1d4ed8', soft: '#dbe4fb' }, // blu intenso
+    { base: '#06b6d4', soft: '#d6f5fa' }, // ciano
+    { base: '#6366f1', soft: '#e3e4fd' }  // indaco/violaceo
+];
+
+function colorForUser(user) {
+    const seed = String(user.id != null ? user.id : user.username || '');
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = (hash * 31 + seed.charCodeAt(i)) % 1000;
+    }
+    return CHAT_COLORS[hash % CHAT_COLORS.length];
+}
 
 async function init() {
     try {
@@ -28,7 +44,7 @@ function renderChatList() {
         const item = document.createElement('div');
         item.className = 'chat-list-item' + (chat.id === selectedChatId ? ' active' : '');
         item.innerHTML = `
-            <div class="avatar">${initials(chat.otherUser.username)}</div>
+            <div class="avatar" style="background:${colorForUser(chat.otherUser).base}">${initials(chat.otherUser.username)}</div>
             <div class="chat-list-item-text">
                 <div class="chat-list-item-name">${escapeHtml(chat.otherUser.username)}</div>
                 <div class="chat-list-item-preview">${escapeHtml(chat.lastMessagePreview || 'Nessun messaggio ancora')}</div>
@@ -52,9 +68,14 @@ function escapeHtml(str) {
 async function selectChat(chatId, otherName) {
     selectedChatId = chatId;
     selectedChatName = otherName;
+    const chat = chats.find(c => c.id === chatId);
+    selectedChatColor = colorForUser(chat ? chat.otherUser : { username: otherName });
     document.getElementById('empty-state').hidden = true;
     document.getElementById('chat-view').hidden = false;
-    document.getElementById('chat-with-name').textContent = otherName;
+    const nameEl = document.getElementById('chat-with-name');
+    nameEl.textContent = otherName;
+    nameEl.style.background = selectedChatColor.base;
+    nameEl.style.color = '#fff';
     renderChatList();
 
     const messages = await Api.getMessages(chatId);
@@ -73,6 +94,9 @@ function appendMessageBubble(message) {
     const bubble = document.createElement('div');
     const isOwn = message.senderId === currentUser.id;
     bubble.className = 'bubble ' + (isOwn ? 'bubble-out' : 'bubble-in');
+    const color = selectedChatColor || colorForUser({ id: message.senderId });
+    bubble.style.background = isOwn ? color.base : color.soft;
+    bubble.style.color = isOwn ? '#fff' : '#050505';
     bubble.innerHTML = `
         <div class="bubble-content">${escapeHtml(message.content)}</div>
         <div class="bubble-time">${new Date(message.sentAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</div>
@@ -92,7 +116,8 @@ function onWsMessage(message) {
         loadChats();
     }
 
-    if (message.chatId === selectedChatId) {
+    const isOwnMessage = message.senderId === currentUser.id;
+    if (message.chatId === selectedChatId && !isOwnMessage) {
         appendMessageBubble(message);
     }
 }
@@ -101,7 +126,13 @@ function sendCurrentMessage() {
     const input = document.getElementById('message-input');
     const content = input.value.trim();
     if (!content || !selectedChatId) return;
-    ChatSocket.sendMessage(selectedChatId, content);
+    try {
+        ChatSocket.sendMessage(selectedChatId, content);
+    } catch (e) {
+        alert('Impossibile inviare il messaggio: connessione non attiva');
+        return;
+    }
+    appendMessageBubble({ senderId: currentUser.id, content, sentAt: new Date().toISOString() });
     input.value = '';
 }
 
@@ -145,7 +176,7 @@ function wireEvents() {
         users.forEach(user => {
             const item = document.createElement('div');
             item.className = 'user-list-item';
-            item.innerHTML = `<div class="avatar">${initials(user.username)}</div><span>${escapeHtml(user.username)}</span>`;
+            item.innerHTML = `<div class="avatar" style="background:${colorForUser(user).base}">${initials(user.username)}</div><span>${escapeHtml(user.username)}</span>`;
             item.addEventListener('click', async () => {
                 const chat = await Api.openChat(user.id);
                 newChatModal.hidden = true;

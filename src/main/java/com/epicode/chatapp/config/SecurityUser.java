@@ -1,6 +1,6 @@
 package com.epicode.chatapp.config;
 
-import com.epicode.chatapp.user.User;
+import com.epicode.chatapp.entities.User;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

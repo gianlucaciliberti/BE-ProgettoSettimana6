@@ -1,0 +1,16 @@
+LOGICA GENERALE APPLICAZIONE
+
+Entities:
+-User: rappresentato da username, email e password.
+-Chat: Conversazione aggiornata in tempo reale, gestita tramite     WebSocket. Usata come 'contenitore' per i messaggi
+-Message: Ogni singolo messaggio, collegato alla Chat alla quale appartiene e all'utente che lo ha scritto.
+
+Service: Gestiscono la logica dell'applicazione. Il chatservice gestisce la creazione o l'apertura di una conversazione tra due utenti, per message il service si occuperà di gestire il salvataggio di un nuovo messaggio e presenta uno storico di una chat. 
+Importante il service che gestirà la chiamata all'Api, leggendo la cronologia e dando a OpenRouter la possibilità di rispondere in maniera coerente.
+
+Controller: Ogni controller deve gestire la richiesta del frontend, richiamare il service corrispondente e restituire la risposta all'utente. UserController manderà quindi una lista di utenti da contattare e i dati dell'utente loggato, ChatController una lista chat precedenti, crea una chat o ne apre una esistente presentando lo storico messaggi, e così via.
+
+Ogni conversazione deve essere leggibile solo dai due utenti che stanno interagendo, quindi il chatservice deve anche assicurarsi di questa cosa. In  aso contrario, scatta un una RuntimeException.
+ogni Exception deve gestire un caso particolare, come ad esempio username già esistente in fase di creazione account, e restituire risposte specifiche. 
+
+Config: SecurityConfig, con regole di Spring Security per login/logout , profili pubblici e chat orivate eccetera. OpenRouterConfig: crea il client HTTP usato per chiamare l'API
