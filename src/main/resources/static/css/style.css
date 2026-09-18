@@ -1,0 +1,351 @@
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #050505;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+}
+
+/* --- Auth (login/register) --- */
+.auth-body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card {
+    width: 340px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+}
+
+.auth-title {
+    text-align: center;
+    color: #0084ff;
+    margin: 0 0 20px;
+}
+
+.auth-tabs {
+    display: flex;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: #f0f2f5;
+    overflow: hidden;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    font-weight: 600;
+    color: #65676b;
+}
+
+.auth-tab.active {
+    background: #0084ff;
+    color: #fff;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-form input {
+    padding: 12px 14px;
+    border: 1px solid #dddfe2;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.auth-message {
+    background: #fff3cd;
+    color: #664d03;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin: 0 0 12px;
+}
+
+.btn-primary {
+    background: #0084ff;
+    color: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-primary:hover { background: #006fd6; }
+
+.btn-secondary {
+    background: #e4e6eb;
+    color: #050505;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.btn-secondary:hover { background: #d8dade; }
+
+.full-width { width: 100%; }
+
+/* --- App shell --- */
+.app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #e4e6eb;
+}
+
+.app-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0084ff;
+}
+
+.current-user {
+    color: #65676b;
+    font-size: 14px;
+}
+
+.header-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.app-body {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: 320px;
+    border-right: 1px solid #e4e6eb;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    gap: 10px;
+}
+
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.chat-list-item, .user-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.chat-list-item:hover, .user-list-item:hover { background: #f0f2f5; }
+.chat-list-item.active { background: #e7f3ff; }
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #0084ff;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.chat-list-item-text { min-width: 0; }
+
+.chat-list-item-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.chat-list-item-preview {
+    font-size: 13px;
+    color: #65676b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Chat panel --- */
+.chat-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.empty-state {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a8d91;
+}
+
+.chat-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.chat-view-header {
+    padding: 14px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #e4e6eb;
+    font-weight: 600;
+}
+
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bubble {
+    max-width: 60%;
+    padding: 10px 14px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.bubble-in {
+    align-self: flex-start;
+    background: #e4e6eb;
+    color: #050505;
+    border-bottom-left-radius: 4px;
+}
+
+.bubble-out {
+    align-self: flex-end;
+    background: #0084ff;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.bubble-time {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.composer {
+    padding: 12px 20px;
+    background: #ffffff;
+    border-top: 1px solid #e4e6eb;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.composer textarea {
+    flex: 1;
+    resize: none;
+    border: 1px solid #dddfe2;
+    border-radius: 18px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+.composer-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* --- Modals --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.modal {
+    background: #fff;
+    width: 360px;
+    max-height: 70vh;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid #e4e6eb;
+    font-weight: 600;
+}
+
+.btn-icon {
+    background: transparent;
+    font-size: 20px;
+    line-height: 1;
+    color: #65676b;
+}
+
+.user-list {
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.stats-body {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #f0f2f5;
+    border-radius: 8px;
+    font-size: 14px;
+}

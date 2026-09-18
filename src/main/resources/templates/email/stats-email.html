@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Le tue statistiche chat</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f0f2f5; font-family:Arial, Helvetica, sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f2f5; padding:24px 0;">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="480" cellpadding="0" cellspacing="0"
+                   style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <tr>
+                    <td style="background-color:#0084ff; padding:24px 32px;">
+                        <h1 style="margin:0; color:#ffffff; font-size:20px;">Le tue statistiche chat</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:24px 32px;">
+                        <p style="font-size:15px; color:#1c1e21;">
+                            Ciao <strong th:text="${fullName}">Utente</strong>, ecco un riepilogo della tua attivit&agrave;:
+                        </p>
+
+                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;">
+                            <tr>
+                                <td style="padding:12px 16px; background-color:#f0f2f5; border-radius:8px;">
+                                    <span style="font-size:14px; color:#65676b;">Messaggi inviati</span><br/>
+                                    <span style="font-size:22px; font-weight:bold; color:#0084ff;" th:text="${messagesSent}">0</span>
+                                </td>
+                            </tr>
+                            <tr><td style="height:10px;"></td></tr>
+                            <tr>
+                                <td style="padding:12px 16px; background-color:#f0f2f5; border-radius:8px;">
+                                    <span style="font-size:14px; color:#65676b;">Messaggi ricevuti</span><br/>
+                                    <span style="font-size:22px; font-weight:bold; color:#0084ff;" th:text="${messagesReceived}">0</span>
+                                </td>
+                            </tr>
+                            <tr><td style="height:10px;"></td></tr>
+                            <tr>
+                                <td style="padding:12px 16px; background-color:#f0f2f5; border-radius:8px;">
+                                    <span style="font-size:14px; color:#65676b;">Chat aperte</span><br/>
+                                    <span style="font-size:22px; font-weight:bold; color:#0084ff;" th:text="${openChats}">0</span>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <p style="font-size:12px; color:#8a8d91; margin-top:24px;">
+                            Email generata automaticamente su tua richiesta dall'app di chat.
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
