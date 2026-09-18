@@ -1,4 +1,4 @@
-package com.epicode.chatapp.stats.dto;
+package com.epicode.chatapp.service;
 
 public record UserStatsDto(long messagesSent, long messagesReceived, long openChats) {
 }

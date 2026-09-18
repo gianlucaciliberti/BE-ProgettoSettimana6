@@ -2,7 +2,7 @@ package com.epicode.chatapp.message;
 
 import com.epicode.chatapp.chat.Chat;
 import com.epicode.chatapp.chat.ChatService;
-import com.epicode.chatapp.message.dto.MessageDto;
+import com.epicode.chatapp.service.MessageDto;
 import com.epicode.chatapp.user.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

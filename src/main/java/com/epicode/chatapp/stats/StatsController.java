@@ -1,7 +1,7 @@
 package com.epicode.chatapp.stats;
 
 import com.epicode.chatapp.mail.StatsMailService;
-import com.epicode.chatapp.stats.dto.UserStatsDto;
+import com.epicode.chatapp.service.UserStatsDto;
 import com.epicode.chatapp.user.User;
 import com.epicode.chatapp.user.UserService;
 import java.security.Principal;

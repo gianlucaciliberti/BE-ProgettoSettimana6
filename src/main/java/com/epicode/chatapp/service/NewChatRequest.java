@@ -1,4 +1,4 @@
-package com.epicode.chatapp.chat.dto;
+package com.epicode.chatapp.service;
 
 import jakarta.validation.constraints.NotNull;
 

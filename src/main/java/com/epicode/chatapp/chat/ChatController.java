@@ -1,12 +1,12 @@
 package com.epicode.chatapp.chat;
 
-import com.epicode.chatapp.chat.dto.ChatDto;
-import com.epicode.chatapp.chat.dto.NewChatRequest;
 import com.epicode.chatapp.message.MessageService;
-import com.epicode.chatapp.message.dto.MessageDto;
+import com.epicode.chatapp.service.ChatDto;
+import com.epicode.chatapp.service.MessageDto;
+import com.epicode.chatapp.service.NewChatRequest;
+import com.epicode.chatapp.service.UserDto;
 import com.epicode.chatapp.user.User;
 import com.epicode.chatapp.user.UserService;
-import com.epicode.chatapp.user.dto.UserDto;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.epicode.chatapp.ai;
 
-import com.epicode.chatapp.ai.dto.AiSuggestionResponse;
+import com.epicode.chatapp.service.AiSuggestionResponse;
 import com.epicode.chatapp.user.User;
 import com.epicode.chatapp.user.UserService;
 import java.security.Principal;

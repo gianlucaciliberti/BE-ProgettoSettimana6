@@ -1,4 +1,4 @@
-package com.epicode.chatapp.message.dto;
+package com.epicode.chatapp.service;
 
 import com.epicode.chatapp.message.Message;
 import java.time.LocalDateTime;

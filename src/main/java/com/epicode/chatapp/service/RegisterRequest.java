@@ -1,4 +1,4 @@
-package com.epicode.chatapp.user.dto;
+package com.epicode.chatapp.service;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

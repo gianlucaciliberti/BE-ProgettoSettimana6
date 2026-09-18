@@ -1,12 +1,12 @@
 package com.epicode.chatapp.chat;
 
-import com.epicode.chatapp.chat.dto.ChatDto;
 import com.epicode.chatapp.exception.ForbiddenException;
 import com.epicode.chatapp.exception.NotFoundException;
 import com.epicode.chatapp.message.Message;
 import com.epicode.chatapp.message.MessageRepository;
+import com.epicode.chatapp.service.ChatDto;
+import com.epicode.chatapp.service.UserDto;
 import com.epicode.chatapp.user.User;
-import com.epicode.chatapp.user.dto.UserDto;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

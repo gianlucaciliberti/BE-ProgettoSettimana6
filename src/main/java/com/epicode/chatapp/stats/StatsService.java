@@ -2,7 +2,7 @@ package com.epicode.chatapp.stats;
 
 import com.epicode.chatapp.chat.ChatRepository;
 import com.epicode.chatapp.message.MessageRepository;
-import com.epicode.chatapp.stats.dto.UserStatsDto;
+import com.epicode.chatapp.service.UserStatsDto;
 import com.epicode.chatapp.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

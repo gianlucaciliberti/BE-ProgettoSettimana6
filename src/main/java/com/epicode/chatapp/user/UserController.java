@@ -1,7 +1,7 @@
 package com.epicode.chatapp.user;
 
-import com.epicode.chatapp.user.dto.RegisterRequest;
-import com.epicode.chatapp.user.dto.UserDto;
+import com.epicode.chatapp.service.RegisterRequest;
+import com.epicode.chatapp.service.UserDto;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;

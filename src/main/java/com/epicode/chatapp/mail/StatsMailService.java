@@ -1,7 +1,7 @@
 package com.epicode.chatapp.mail;
 
+import com.epicode.chatapp.service.UserStatsDto;
 import com.epicode.chatapp.stats.StatsService;
-import com.epicode.chatapp.stats.dto.UserStatsDto;
 import com.epicode.chatapp.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

@@ -1,6 +1,5 @@
-package com.epicode.chatapp.chat.dto;
+package com.epicode.chatapp.service;
 
-import com.epicode.chatapp.user.dto.UserDto;
 import java.time.LocalDateTime;
 
 public record ChatDto(

@@ -1,4 +1,4 @@
-package com.epicode.chatapp.user.dto;
+package com.epicode.chatapp.service;
 
 import com.epicode.chatapp.user.User;
 

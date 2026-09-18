@@ -1,4 +1,4 @@
-package com.epicode.chatapp.ai.dto;
+package com.epicode.chatapp.service;
 
 public record AiSuggestionResponse(String suggestion) {
 }
