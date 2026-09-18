@@ -227,6 +227,11 @@ button {
     min-height: 0;
 }
 
+.empty-state[hidden],
+.chat-view[hidden] {
+    display: none;
+}
+
 .chat-view-header {
     padding: 14px 20px;
     background: #ffffff;

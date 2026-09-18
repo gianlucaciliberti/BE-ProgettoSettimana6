@@ -1,0 +1,763 @@
+{
+  "info": {
+    "_postman_id": "2519c09c-3dda-44ed-9b8c-06947592d2f9",
+    "name": "ChatApp - Test API",
+    "description": "Collection di test per l'API di ChatApp (utenti, autenticazione, chat, messaggi, suggerimenti AI, statistiche).\n\nNote:\n- L'app usa autenticazione a sessione (Spring Security form login), NON JWT: dopo il login il cookie JSESSIONID viene salvato automaticamente dal cookie jar di Postman e riusato dalle richieste successive sullo stesso dominio.\n- L'invio dei messaggi avviene solo via WebSocket STOMP (endpoint /ws, destinazione /app/chat.send) e non è esposto via REST: per questo il test sui \"messaggi\" verifica la lettura dello storico (GET /api/chats/{chatId}/messages), che è l'unica operazione REST disponibile.\n- Esegui la collection con il Collection Runner (o Newman con --cookie-jar) mantenendo l'ordine delle richieste: le richieste successive dipendono da variabili salvate da quelle precedenti (id utente, id chat, ecc).\n- Prima di eseguire, assicurati che il backend sia in esecuzione su {{baseUrl}} (default http://localhost:8080).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Autenticazione",
+      "item": [
+        {
+          "name": "Registra Utente 1 (creazione utente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201 Created\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Risposta contiene id, username ed email corretti\", () => {",
+                  "    pm.expect(body).to.have.property(\"id\");",
+                  "    pm.expect(body.username).to.eql(pm.collectionVariables.get(\"user1Username\"));",
+                  "    pm.expect(body.email).to.eql(pm.collectionVariables.get(\"user1Email\"));",
+                  "});",
+                  "",
+                  "pm.test(\"La password non viene mai restituita\", () => {",
+                  "    pm.expect(body).to.not.have.property(\"password\");",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"user1Id\", body.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{user1Username}}\",\n  \"email\": \"{{user1Email}}\",\n  \"password\": \"{{user1Password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "register"]
+            },
+            "description": "Crea il primo utente di test. Non richiede autenticazione (endpoint pubblico)."
+          }
+        },
+        {
+          "name": "Registra Utente 2 (creazione utente)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 201 Created\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Risposta contiene id, username ed email corretti\", () => {",
+                  "    pm.expect(body).to.have.property(\"id\");",
+                  "    pm.expect(body.username).to.eql(pm.collectionVariables.get(\"user2Username\"));",
+                  "    pm.expect(body.email).to.eql(pm.collectionVariables.get(\"user2Email\"));",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"user2Id\", body.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{user2Username}}\",\n  \"email\": \"{{user2Email}}\",\n  \"password\": \"{{user2Password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "register"]
+            },
+            "description": "Crea il secondo utente di test, usato più avanti per aprire una chat con l'Utente 1."
+          }
+        },
+        {
+          "name": "Registrazione fallisce - username duplicato",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 409 Conflict\", () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Messaggio di errore relativo al nome utente duplicato\", () => {",
+                  "    pm.expect(body.message.toLowerCase()).to.include(\"nome utente\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{user1Username}}\",\n  \"email\": \"altra.email.{{runId}}@test.com\",\n  \"password\": \"Password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "register"]
+            },
+            "description": "Riusa lo username dell'Utente 1: l'API deve rifiutare la registrazione con 409 Conflict."
+          }
+        },
+        {
+          "name": "Registrazione fallisce - dati non validi",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 400 Bad Request\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Risposta contiene un messaggio di validazione\", () => {",
+                  "    pm.expect(body).to.have.property(\"message\");",
+                  "    pm.expect(body.status).to.eql(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"\",\n  \"email\": \"non-e-una-email\",\n  \"password\": \"123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "register"]
+            },
+            "description": "Username vuoto, email non valida e password troppo corta: deve fallire la validazione (400)."
+          }
+        },
+        {
+          "name": "Accesso senza login - non autorizzato",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 401 Unauthorized\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Corpo della risposta indica login richiesto\", () => {",
+                  "    pm.expect(body.status).to.eql(401);",
+                  "    pm.expect(body.message).to.include(\"Login\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "me"]
+            },
+            "description": "Nessun login effettuato finora in questa esecuzione: la richiesta a un endpoint protetto deve restituire 401 con corpo JSON (vedi jsonEntryPoint in SecurityConfig)."
+          }
+        },
+        {
+          "name": "Login fallisce - credenziali errate",
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 302 Found (redirect di errore)\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"Redirect verso login.html?error\", () => {",
+                  "    const location = pm.response.headers.get(\"Location\");",
+                  "    pm.expect(location).to.include(\"login.html\");",
+                  "    pm.expect(location).to.include(\"error\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "username", "value": "{{user1Username}}" },
+                { "key": "password", "value": "password-sbagliata" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Password errata per un utente esistente: Spring Security reindirizza a /login.html?error con 302."
+          }
+        },
+        {
+          "name": "Login Utente 1",
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 302 Found (redirect di successo)\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"Redirect verso chats.html\", () => {",
+                  "    const location = pm.response.headers.get(\"Location\");",
+                  "    pm.expect(location).to.include(\"chats.html\");",
+                  "});",
+                  "",
+                  "pm.test(\"Cookie di sessione JSESSIONID impostato\", () => {",
+                  "    pm.expect(pm.cookies.has(\"JSESSIONID\")).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "username", "value": "{{user1Username}}" },
+                { "key": "password", "value": "{{user1Password}}" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Login form-based (non JSON/JWT). Il cookie JSESSIONID viene salvato dal cookie jar di Postman e riusato automaticamente dalle richieste successive verso lo stesso host."
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Utenti",
+      "item": [
+        {
+          "name": "Utente corrente (me)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"L'utente autenticato è l'Utente 1\", () => {",
+                  "    pm.expect(body.username).to.eql(pm.collectionVariables.get(\"user1Username\"));",
+                  "    pm.expect(body.email).to.eql(pm.collectionVariables.get(\"user1Email\"));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "me"]
+            },
+            "description": "Richiede la sessione autenticata ottenuta dal login precedente."
+          }
+        },
+        {
+          "name": "Lista altri utenti",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"La risposta è un array\", () => {",
+                  "    pm.expect(body).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "const user2Username = pm.collectionVariables.get(\"user2Username\");",
+                  "const other = body.find(u => u.username === user2Username);",
+                  "",
+                  "pm.test(\"L'Utente 2 è presente nella lista e non è l'utente corrente\", () => {",
+                  "    pm.expect(other).to.not.be.undefined;",
+                  "    pm.expect(String(other.id)).to.not.eql(pm.collectionVariables.get(\"user1Id\"));",
+                  "});",
+                  "",
+                  "if (other) {",
+                  "    pm.collectionVariables.set(\"otherUserId\", other.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Elenca tutti gli utenti tranne quello corrente. Salva l'id dell'Utente 2 nella variabile otherUserId per i test sulle chat."
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Chat",
+      "item": [
+        {
+          "name": "Crea chat con se stesso - vietato",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403 Forbidden\", () => {",
+                  "    pm.response.to.have.status(403);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Messaggio coerente con il divieto\", () => {",
+                  "    pm.expect(body.message.toLowerCase()).to.include(\"te stesso\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"otherUserId\": {{user1Id}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chats"]
+            },
+            "description": "L'Utente 1 tenta di aprire una chat con se stesso: deve essere rifiutato con 403."
+          }
+        },
+        {
+          "name": "Crea o apri chat con Utente 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"La chat viene creata con l'altro utente corretto\", () => {",
+                  "    pm.expect(body).to.have.property(\"id\");",
+                  "    pm.expect(String(body.otherUser.id)).to.eql(String(pm.collectionVariables.get(\"otherUserId\")));",
+                  "    pm.expect(body.otherUser.username).to.eql(pm.collectionVariables.get(\"user2Username\"));",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"chatId\", body.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"otherUserId\": {{otherUserId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chats"]
+            },
+            "description": "Apre (o recupera se già esistente) la chat 1-a-1 tra l'Utente 1 e l'Utente 2. Salva l'id della chat per i test successivi."
+          }
+        },
+        {
+          "name": "Lista chat dell'utente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"La risposta è un array e contiene la chat creata\", () => {",
+                  "    pm.expect(body).to.be.an(\"array\");",
+                  "    const chatId = pm.collectionVariables.get(\"chatId\");",
+                  "    const found = body.find(c => String(c.id) === String(chatId));",
+                  "    pm.expect(found).to.not.be.undefined;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chats"]
+            },
+            "description": "Elenca tutte le chat dell'utente autenticato."
+          }
+        },
+        {
+          "name": "Messaggi della chat (storico messaggi)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"La risposta è un array di messaggi\", () => {",
+                  "    pm.expect(body).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"Ogni messaggio (se presente) ha la forma attesa\", () => {",
+                  "    body.forEach(msg => {",
+                  "        pm.expect(msg).to.have.property(\"id\");",
+                  "        pm.expect(msg).to.have.property(\"chatId\");",
+                  "        pm.expect(msg).to.have.property(\"senderId\");",
+                  "        pm.expect(msg).to.have.property(\"content\");",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chats/{{chatId}}/messages",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chats", "{{chatId}}", "messages"]
+            },
+            "description": "Recupera lo storico messaggi della chat. NOTA: l'invio dei messaggi avviene solo via WebSocket STOMP (/ws, destinazione /app/chat.send), non esiste un endpoint REST per crearli: appena aperta, la chat è vuota, quindi ci si aspetta un array (eventualmente vuoto)."
+          }
+        },
+        {
+          "name": "Messaggi di chat inesistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"Messaggio di errore coerente\", () => {",
+                  "    pm.expect(body.message.toLowerCase()).to.include(\"chat non trovata\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chats/999999999/messages",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chats", "999999999", "messages"]
+            },
+            "description": "Richiede i messaggi di una chat con id inesistente: deve restituire 404."
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Suggerimento AI",
+      "item": [
+        {
+          "name": "Richiedi suggerimento AI per la chat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// NOTA: questo endpoint chiama un servizio esterno (OpenRouter) configurato",
+                  "// tramite la variabile d'ambiente OPENROUTER_API_KEY. Se la chiave non è",
+                  "// configurata sul backend in esecuzione, la richiesta può fallire con un",
+                  "// errore lato server: in tal caso il test sullo status va interpretato",
+                  "// come verifica di configurazione, non come bug applicativo.",
+                  "pm.test(\"Status 200 OK (richiede OPENROUTER_API_KEY configurata sul server)\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"La risposta contiene un suggerimento testuale non vuoto\", () => {",
+                  "    pm.expect(body).to.have.property(\"suggestion\");",
+                  "    pm.expect(body.suggestion).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/chats/{{chatId}}/ai-suggest",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chats", "{{chatId}}", "ai-suggest"]
+            },
+            "description": "Chiede all'AI un suggerimento per il prossimo messaggio da inviare nella chat. Dipende dalla configurazione OpenRouter (openrouter.api-key) sul backend."
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - Statistiche",
+      "item": [
+        {
+          "name": "Statistiche utente corrente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test(\"La risposta contiene i contatori attesi\", () => {",
+                  "    pm.expect(body).to.have.property(\"messagesSent\");",
+                  "    pm.expect(body).to.have.property(\"messagesReceived\");",
+                  "    pm.expect(body).to.have.property(\"openChats\");",
+                  "    pm.expect(body.openChats).to.be.at.least(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stats/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "stats", "me"]
+            },
+            "description": "Statistiche dell'utente autenticato (messaggi inviati/ricevuti, chat aperte)."
+          }
+        },
+        {
+          "name": "Invia statistiche via email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// NOTA: richiede la configurazione SMTP (spring.mail.username / MAIL_APP_PASSWORD)",
+                  "// sul backend in esecuzione, altrimenti l'invio può fallire con 502 (EmailDeliveryException).",
+                  "pm.test(\"Status 202 Accepted (richiede SMTP configurato sul server)\", () => {",
+                  "    pm.response.to.have.status(202);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/stats/me/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "stats", "me", "email"]
+            },
+            "description": "Invia le statistiche dell'utente corrente via email. Dipende dalla configurazione SMTP del backend."
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - Logout",
+      "item": [
+        {
+          "name": "Logout Utente 1",
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 302 Found (redirect dopo logout)\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"Redirect verso login.html?logout\", () => {",
+                  "    const location = pm.response.headers.get(\"Location\");",
+                  "    pm.expect(location).to.include(\"login.html\");",
+                  "    pm.expect(location).to.include(\"logout\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["logout"]
+            },
+            "description": "Invalida la sessione e rimuove il cookie JSESSIONID, così una nuova esecuzione della collection riparte da uno stato non autenticato."
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Genera dati utente unici per ogni esecuzione della collection,",
+          "// così i test di registrazione non falliscono per conflitto (409)",
+          "// se la collection viene rieseguita più volte sullo stesso database.",
+          "if (!pm.collectionVariables.get(\"runId\")) {",
+          "    const runId = Date.now();",
+          "    pm.collectionVariables.set(\"runId\", runId);",
+          "    pm.collectionVariables.set(\"user1Username\", \"mario_\" + runId);",
+          "    pm.collectionVariables.set(\"user1Email\", \"mario\" + runId + \"@test.com\");",
+          "    pm.collectionVariables.set(\"user1Password\", \"Password123\");",
+          "    pm.collectionVariables.set(\"user2Username\", \"luigi_\" + runId);",
+          "    pm.collectionVariables.set(\"user2Email\", \"luigi\" + runId + \"@test.com\");",
+          "    pm.collectionVariables.set(\"user2Password\", \"Password123\");",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "runId", "value": "" },
+    { "key": "user1Username", "value": "" },
+    { "key": "user1Email", "value": "" },
+    { "key": "user1Password", "value": "" },
+    { "key": "user1Id", "value": "" },
+    { "key": "user2Username", "value": "" },
+    { "key": "user2Email", "value": "" },
+    { "key": "user2Password", "value": "" },
+    { "key": "user2Id", "value": "" },
+    { "key": "otherUserId", "value": "" },
+    { "key": "chatId", "value": "" }
+  ]
+}
