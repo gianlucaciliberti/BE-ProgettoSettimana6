@@ -26,13 +26,13 @@ public class ChatWebSocketController {
 
     @MessageMapping("/chat.send")
     public void send(SendMessageRequest request, Principal principal) {
-        User sender = userService.getByEmail(principal.getName());
+        User sender = userService.getByUsername(principal.getName());
         MessageDto saved = messageService.sendMessage(sender, request.chatId(), request.content());
 
         Chat chat = chatService.getByIdForParticipant(request.chatId(), sender);
         User recipient = chat.theOtherUser(sender);
 
-        messagingTemplate.convertAndSendToUser(recipient.getEmail(), USER_QUEUE, saved);
-        messagingTemplate.convertAndSendToUser(sender.getEmail(), USER_QUEUE, saved);
+        messagingTemplate.convertAndSendToUser(recipient.getUsername(), USER_QUEUE, saved);
+        messagingTemplate.convertAndSendToUser(sender.getUsername(), USER_QUEUE, saved);
     }
 }

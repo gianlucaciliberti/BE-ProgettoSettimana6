@@ -24,13 +24,13 @@ public class ChatController {
 
     @GetMapping
     public List<ChatDto> listChats(Principal principal) {
-        User current = userService.getByEmail(principal.getName());
+        User current = userService.getByUsername(principal.getName());
         return chatService.getChatsForUser(current);
     }
 
     @PostMapping
     public ChatDto openOrCreateChat(@Valid @RequestBody NewChatRequest request, Principal principal) {
-        User current = userService.getByEmail(principal.getName());
+        User current = userService.getByUsername(principal.getName());
         User other = userService.getById(request.otherUserId());
         Chat chat = chatService.getOrCreate(current, other);
         return new ChatDto(chat.getId(), UserDto.from(other), null, chat.getCreatedAt());
@@ -38,7 +38,7 @@ public class ChatController {
 
     @GetMapping("/{chatId}/messages")
     public List<MessageDto> getMessages(@PathVariable Long chatId, Principal principal) {
-        User current = userService.getByEmail(principal.getName());
+        User current = userService.getByUsername(principal.getName());
         return messageService.getHistory(current, chatId);
     }
 }

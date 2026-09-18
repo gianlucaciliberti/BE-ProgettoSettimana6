@@ -16,20 +16,23 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public User register(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.username())) {
+            throw new ConflictException("Esiste gia' un utente con questo nome utente");
+        }
         if (userRepository.existsByEmail(request.email())) {
             throw new ConflictException("Esiste gia' un utente con questa email");
         }
         User user = User.builder()
-                .fullName(request.fullName())
+                .username(request.username())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
                 .build();
         return userRepository.save(user);
     }
 
-    public User getByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Utente non trovato: " + email));
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Utente non trovato: " + username));
     }
 
     public User getById(Long id) {

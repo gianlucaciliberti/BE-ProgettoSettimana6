@@ -1,11 +1,13 @@
 package com.epicode.chatapp.mail;
 
+import com.epicode.chatapp.exception.EmailDeliveryException;
 import com.epicode.chatapp.service.UserStatsDto;
 import com.epicode.chatapp.stats.StatsService;
 import com.epicode.chatapp.user.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class StatsMailService {
         UserStatsDto stats = statsService.getStats(user);
 
         Context context = new Context();
-        context.setVariable("fullName", user.getFullName());
+        context.setVariable("username", user.getUsername());
         context.setVariable("messagesSent", stats.messagesSent());
         context.setVariable("messagesReceived", stats.messagesReceived());
         context.setVariable("openChats", stats.openChats());
@@ -37,8 +39,11 @@ public class StatsMailService {
             helper.setSubject("Le tue statistiche chat");
             helper.setText(html, true);
             mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            throw new IllegalStateException("Invio email delle statistiche fallito", e);
+        } catch (MessagingException | MailException e) {
+            throw new EmailDeliveryException(
+                    "Invio email fallito: controlla le credenziali SMTP (MAIL_USERNAME/MAIL_APP_PASSWORD) in application-local.properties",
+                    e
+            );
         }
     }
 }

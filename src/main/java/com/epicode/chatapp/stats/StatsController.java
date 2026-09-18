@@ -23,12 +23,12 @@ public class StatsController {
 
     @GetMapping("/me")
     public UserStatsDto myStats(Principal principal) {
-        return statsService.getStats(userService.getByEmail(principal.getName()));
+        return statsService.getStats(userService.getByUsername(principal.getName()));
     }
 
     @PostMapping("/me/email")
     public ResponseEntity<Void> emailMyStats(Principal principal) {
-        User user = userService.getByEmail(principal.getName());
+        User user = userService.getByUsername(principal.getName());
         statsMailService.sendStatsEmail(user);
         return ResponseEntity.accepted().build();
     }

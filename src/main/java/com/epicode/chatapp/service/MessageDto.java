@@ -17,7 +17,7 @@ public record MessageDto(
                 message.getId(),
                 message.getChat().getId(),
                 message.getSender().getId(),
-                message.getSender().getFullName(),
+                message.getSender().getUsername(),
                 message.getContent(),
                 message.getSentAt()
         );

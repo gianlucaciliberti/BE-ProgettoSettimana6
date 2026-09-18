@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Registrati - ChatApp</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body class="auth-body">
+<div class="auth-card">
+    <h1 class="auth-title">ChatApp</h1>
+    <h2 class="auth-subtitle">Registrati</h2>
+
+    <p id="auth-message" class="auth-message" hidden></p>
+
+    <form id="register-form" class="auth-form">
+        <input type="text" id="reg-username" placeholder="Nome utente" required/>
+        <input type="email" id="reg-email" placeholder="Email" required/>
+        <input type="password" id="reg-password" placeholder="Password (min. 6 caratteri)" required minlength="6"/>
+        <button type="submit" class="btn-primary">Crea account</button>
+    </form>
+
+    <p class="auth-switch">Hai gi&agrave; un account? <a href="/login.html">Accedi</a></p>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+    const messageEl = document.getElementById('auth-message');
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            username: document.getElementById('reg-username').value,
+            email: document.getElementById('reg-email').value,
+            password: document.getElementById('reg-password').value
+        };
+        try {
+            await Api.register(payload);
+            location.href = '/login.html?registered';
+        } catch (err) {
+            messageEl.textContent = err.message || 'Registrazione fallita.';
+            messageEl.hidden = false;
+        }
+    });
+</script>
+</body>
+</html>

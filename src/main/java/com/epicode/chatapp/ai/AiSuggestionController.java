@@ -20,7 +20,7 @@ public class AiSuggestionController {
 
     @PostMapping
     public AiSuggestionResponse suggest(@PathVariable Long chatId, Principal principal) {
-        User current = userService.getByEmail(principal.getName());
+        User current = userService.getByUsername(principal.getName());
         String suggestion = aiSuggestionService.suggestNextMessage(current, chatId);
         return new AiSuggestionResponse(suggestion);
     }

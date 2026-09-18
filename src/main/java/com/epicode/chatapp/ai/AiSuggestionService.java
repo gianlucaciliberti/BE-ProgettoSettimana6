@@ -39,13 +39,13 @@ public class AiSuggestionService {
     private String buildTranscript(List<Message> messages, User currentUser, User otherUser) {
         StringBuilder sb = new StringBuilder();
         if (messages.isEmpty()) {
-            sb.append("La conversazione con ").append(otherUser.getFullName())
+            sb.append("La conversazione con ").append(otherUser.getUsername())
                     .append(" non ha ancora messaggi.\n");
         } else {
             for (Message message : messages) {
                 String label = message.getSender().getId().equals(currentUser.getId())
                         ? "Utente"
-                        : otherUser.getFullName();
+                        : otherUser.getUsername();
                 sb.append('[').append(label).append("]: ").append(message.getContent()).append('\n');
             }
         }

@@ -9,7 +9,7 @@ async function init() {
     } catch (e) {
         return;
     }
-    document.getElementById('current-user-name').textContent = currentUser.fullName;
+    document.getElementById('current-user-name').textContent = currentUser.username;
 
     await loadChats();
     ChatSocket.connect(onWsMessage);
@@ -28,13 +28,13 @@ function renderChatList() {
         const item = document.createElement('div');
         item.className = 'chat-list-item' + (chat.id === selectedChatId ? ' active' : '');
         item.innerHTML = `
-            <div class="avatar">${initials(chat.otherUser.fullName)}</div>
+            <div class="avatar">${initials(chat.otherUser.username)}</div>
             <div class="chat-list-item-text">
-                <div class="chat-list-item-name">${escapeHtml(chat.otherUser.fullName)}</div>
+                <div class="chat-list-item-name">${escapeHtml(chat.otherUser.username)}</div>
                 <div class="chat-list-item-preview">${escapeHtml(chat.lastMessagePreview || 'Nessun messaggio ancora')}</div>
             </div>
         `;
-        item.addEventListener('click', () => selectChat(chat.id, chat.otherUser.fullName));
+        item.addEventListener('click', () => selectChat(chat.id, chat.otherUser.username));
         list.appendChild(item);
     });
 }
@@ -145,12 +145,12 @@ function wireEvents() {
         users.forEach(user => {
             const item = document.createElement('div');
             item.className = 'user-list-item';
-            item.innerHTML = `<div class="avatar">${initials(user.fullName)}</div><span>${escapeHtml(user.fullName)}</span>`;
+            item.innerHTML = `<div class="avatar">${initials(user.username)}</div><span>${escapeHtml(user.username)}</span>`;
             item.addEventListener('click', async () => {
                 const chat = await Api.openChat(user.id);
                 newChatModal.hidden = true;
                 await loadChats();
-                selectChat(chat.id, user.fullName);
+                selectChat(chat.id, user.username);
             });
             userList.appendChild(item);
         });

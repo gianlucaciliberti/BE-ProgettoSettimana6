@@ -39,14 +39,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login.html", "/css/**", "/js/**", "/login",
+                        .requestMatchers("/", "/login.html", "/register.html", "/css/**", "/js/**", "/login",
                                 "/api/users/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login.html")
                         .loginProcessingUrl("/login")
-                        .usernameParameter("email")
+                        .usernameParameter("username")
                         .passwordParameter("password")
                         .defaultSuccessUrl("/chats.html", true)
                         .failureUrl("/login.html?error")

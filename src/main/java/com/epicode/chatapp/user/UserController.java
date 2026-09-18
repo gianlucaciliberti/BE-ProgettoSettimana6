@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping
     public List<UserDto> listOtherUsers(Principal principal) {
-        Long currentUserId = userService.getByEmail(principal.getName()).getId();
+        Long currentUserId = userService.getByUsername(principal.getName()).getId();
         return userService.getAllExcept(currentUserId).stream()
                 .map(UserDto::from)
                 .toList();
@@ -32,6 +32,6 @@ public class UserController {
 
     @GetMapping("/me")
     public UserDto me(Principal principal) {
-        return UserDto.from(userService.getByEmail(principal.getName()));
+        return UserDto.from(userService.getByUsername(principal.getName()));
     }
 }

@@ -9,70 +9,32 @@
 <body class="auth-body">
 <div class="auth-card">
     <h1 class="auth-title">ChatApp</h1>
-
-    <div class="auth-tabs">
-        <button type="button" class="auth-tab active" data-tab="login">Accedi</button>
-        <button type="button" class="auth-tab" data-tab="register">Registrati</button>
-    </div>
+    <h2 class="auth-subtitle">Accedi</h2>
 
     <p id="auth-message" class="auth-message" hidden></p>
 
     <form id="login-form" class="auth-form" method="post" action="/login">
-        <input type="email" name="email" placeholder="Email" required autocomplete="username"/>
+        <input type="text" name="username" placeholder="Nome utente" required autocomplete="username"/>
         <input type="password" name="password" placeholder="Password" required autocomplete="current-password"/>
         <button type="submit" class="btn-primary">Accedi</button>
     </form>
 
-    <form id="register-form" class="auth-form" hidden>
-        <input type="text" id="reg-fullName" placeholder="Nome e cognome" required/>
-        <input type="email" id="reg-email" placeholder="Email" required/>
-        <input type="password" id="reg-password" placeholder="Password (min. 6 caratteri)" required minlength="6"/>
-        <button type="submit" class="btn-primary">Crea account</button>
-    </form>
+    <p class="auth-switch">Non hai un account? <a href="/register.html">Registrati</a></p>
 </div>
 
-<script src="/js/api.js"></script>
 <script>
     const params = new URLSearchParams(location.search);
     const messageEl = document.getElementById('auth-message');
     if (params.has('error')) {
-        messageEl.textContent = 'Email o password non corretti.';
+        messageEl.textContent = 'Nome utente o password non corretti.';
         messageEl.hidden = false;
     } else if (params.has('logout')) {
         messageEl.textContent = 'Logout effettuato con successo.';
         messageEl.hidden = false;
+    } else if (params.has('registered')) {
+        messageEl.textContent = 'Account creato! Ora puoi accedere.';
+        messageEl.hidden = false;
     }
-
-    const tabs = document.querySelectorAll('.auth-tab');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    tabs.forEach(tab => tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        const isLogin = tab.dataset.tab === 'login';
-        loginForm.hidden = !isLogin;
-        registerForm.hidden = isLogin;
-        messageEl.hidden = true;
-    }));
-
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const payload = {
-            fullName: document.getElementById('reg-fullName').value,
-            email: document.getElementById('reg-email').value,
-            password: document.getElementById('reg-password').value
-        };
-        try {
-            await Api.register(payload);
-            messageEl.textContent = 'Account creato! Ora puoi accedere.';
-            messageEl.hidden = false;
-            tabs[0].click();
-            document.querySelector('#login-form input[name=email]').value = payload.email;
-        } catch (err) {
-            messageEl.textContent = err.message || 'Registrazione fallita.';
-            messageEl.hidden = false;
-        }
-    });
 </script>
 </body>
 </html>
