@@ -34,3 +34,8 @@ build/
 ### Secrets / local config ###
 application-local.properties
 .env
+
+### Log/PID di avvio manuale ###
+app-stdout.log
+app-stderr.log
+app-pid.txt
