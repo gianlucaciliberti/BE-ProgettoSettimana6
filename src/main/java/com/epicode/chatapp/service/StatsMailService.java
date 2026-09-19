@@ -6,6 +6,8 @@ import com.epicode.chatapp.entities.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StatsMailService {
@@ -20,6 +23,9 @@ public class StatsMailService {
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final StatsService statsService;
+
+    @Value("${spring.mail.username:}")
+    private String fromAddress;
 
     public void sendStatsEmail(User user) {
         UserStatsDto stats = statsService.getStats(user);
@@ -34,11 +40,15 @@ public class StatsMailService {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            if (fromAddress != null && !fromAddress.isBlank()) {
+                helper.setFrom(fromAddress);
+            }
             helper.setTo(user.getEmail());
             helper.setSubject("Le tue statistiche chat");
             helper.setText(html, true);
             mailSender.send(mimeMessage);
         } catch (MessagingException | MailException e) {
+            log.error("Invio email statistiche fallito", e);
             throw new EmailDeliveryException(
                     "Invio email fallito: controlla le credenziali SMTP (MAIL_USERNAME/MAIL_APP_PASSWORD) in application-local.properties",
                     e

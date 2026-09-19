@@ -2,6 +2,7 @@ package com.epicode.chatapp.controller;
 
 import com.epicode.chatapp.dto.AiSuggestionResponse;
 import com.epicode.chatapp.entities.User;
+import com.epicode.chatapp.service.AiSuggestionService;
 import com.epicode.chatapp.service.UserService;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;

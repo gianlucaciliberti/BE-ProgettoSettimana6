@@ -2,7 +2,9 @@ package com.epicode.chatapp.service;
 
 import com.epicode.chatapp.exception.ForbiddenException;
 import com.epicode.chatapp.exception.NotFoundException;
+import com.epicode.chatapp.entities.Chat;
 import com.epicode.chatapp.entities.Message;
+import com.epicode.chatapp.repository.ChatRepository;
 import com.epicode.chatapp.repository.MessageRepository;
 import com.epicode.chatapp.dto.ChatDto;
 import com.epicode.chatapp.dto.UserDto;

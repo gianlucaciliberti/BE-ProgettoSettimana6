@@ -56,15 +56,24 @@
 
 <!-- Modale statistiche -->
 <div id="stats-modal" class="modal-overlay" hidden>
-    <div class="modal">
+    <div class="modal stats-modal">
         <div class="modal-header">
             <span>Le tue statistiche</span>
             <button id="close-stats" class="btn-icon">&times;</button>
         </div>
         <div class="stats-body">
-            <div class="stat-row"><span>Messaggi inviati</span><strong id="stat-sent">-</strong></div>
-            <div class="stat-row"><span>Messaggi ricevuti</span><strong id="stat-received">-</strong></div>
-            <div class="stat-row"><span>Chat aperte</span><strong id="stat-chats">-</strong></div>
+            <div class="stat-row stat-sent">
+                <div class="stat-info"><span class="stat-label">Messaggi inviati</span><span class="stat-hint">Totale dei messaggi che hai scritto</span></div>
+                <strong id="stat-sent" class="stat-value">-</strong>
+            </div>
+            <div class="stat-row stat-received">
+                <div class="stat-info"><span class="stat-label">Messaggi ricevuti</span><span class="stat-hint">Messaggi arrivati dagli altri utenti</span></div>
+                <strong id="stat-received" class="stat-value">-</strong>
+            </div>
+            <div class="stat-row stat-chats">
+                <div class="stat-info"><span class="stat-label">Chat aperte</span><span class="stat-hint">Conversazioni a cui partecipi</span></div>
+                <strong id="stat-chats" class="stat-value">-</strong>
+            </div>
             <button id="email-stats-btn" class="btn-primary full-width">Invia via email</button>
             <p id="stats-message" class="auth-message" hidden></p>
         </div>

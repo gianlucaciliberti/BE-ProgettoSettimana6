@@ -352,18 +352,70 @@ button {
     padding: 10px;
 }
 
+.stats-modal {
+    width: 420px;
+    max-width: 92vw;
+}
+
 .stats-body {
-    padding: 18px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 }
 
 .stat-row {
+    --accent: #0084ff;
+    --accent-soft: #e7f3ff;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    padding: 10px 12px;
-    background: #f0f2f5;
-    border-radius: 8px;
-    font-size: 14px;
+    gap: 16px;
+    padding: 14px 16px;
+    background: var(--accent-soft);
+    border-left: 5px solid var(--accent);
+    border-radius: 12px;
+}
+
+.stat-row.stat-received {
+    --accent: #31a24c;
+    --accent-soft: #e6f6ea;
+}
+
+.stat-row.stat-chats {
+    --accent: #f5892a;
+    --accent-soft: #fff1e3;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #050505;
+}
+
+.stat-hint {
+    font-size: 12px;
+    color: #65676b;
+}
+
+.stat-value {
+    flex-shrink: 0;
+    min-width: 76px;
+    height: 76px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 14px;
+    font-size: 32px;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
 }

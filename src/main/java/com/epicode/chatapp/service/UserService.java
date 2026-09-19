@@ -3,6 +3,8 @@ package com.epicode.chatapp.service;
 import com.epicode.chatapp.exception.ConflictException;
 import com.epicode.chatapp.exception.NotFoundException;
 import com.epicode.chatapp.dto.RegisterRequest;
+import com.epicode.chatapp.entities.User;
+import com.epicode.chatapp.repository.UserRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

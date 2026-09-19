@@ -1,5 +1,6 @@
 package com.epicode.chatapp.repository;
 
+import com.epicode.chatapp.entities.Chat;
 import com.epicode.chatapp.entities.User;
 import java.util.List;
 import java.util.Optional;

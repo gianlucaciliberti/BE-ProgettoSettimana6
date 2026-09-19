@@ -1,6 +1,7 @@
 package com.epicode.chatapp.controller;
 
 import com.epicode.chatapp.service.StatsMailService;
+import com.epicode.chatapp.service.StatsService;
 import com.epicode.chatapp.dto.UserStatsDto;
 import com.epicode.chatapp.entities.User;
 import com.epicode.chatapp.service.UserService;

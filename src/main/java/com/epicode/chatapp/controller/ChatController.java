@@ -1,5 +1,7 @@
 package com.epicode.chatapp.controller;
 
+import com.epicode.chatapp.entities.Chat;
+import com.epicode.chatapp.service.ChatService;
 import com.epicode.chatapp.service.MessageService;
 import com.epicode.chatapp.dto.ChatDto;
 import com.epicode.chatapp.dto.MessageDto;

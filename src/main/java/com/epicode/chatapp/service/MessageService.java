@@ -2,7 +2,9 @@ package com.epicode.chatapp.service;
 
 import com.epicode.chatapp.entities.Chat;
 import com.epicode.chatapp.dto.MessageDto;
+import com.epicode.chatapp.entities.Message;
 import com.epicode.chatapp.entities.User;
+import com.epicode.chatapp.repository.MessageRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

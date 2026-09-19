@@ -14,3 +14,4 @@ Ogni conversazione deve essere leggibile solo dai due utenti che stanno interage
 ogni Exception deve gestire un caso particolare, come ad esempio username già esistente in fase di creazione account, e restituire risposte specifiche. 
 
 Config: SecurityConfig, con regole di Spring Security per login/logout , profili pubblici e chat orivate eccetera. OpenRouterConfig: crea il client HTTP usato per chiamare l'API
+L'invio delle mail delle statistiche gestito con JavaMailSender.

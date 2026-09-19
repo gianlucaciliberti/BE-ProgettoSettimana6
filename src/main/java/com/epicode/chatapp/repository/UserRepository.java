@@ -1,5 +1,6 @@
 package com.epicode.chatapp.repository;
 
+import com.epicode.chatapp.entities.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
